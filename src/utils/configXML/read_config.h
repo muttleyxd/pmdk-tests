@@ -46,7 +46,7 @@ const std::string SEPARATOR = "/";
 template <class DerivedConfig>
 class ReadConfig : public NonCopyable {
  private:
-  const std::string config_ = "config.xml";
+  const std::string config_{"config.xml"};
 
  protected:
   void PrintErrMsg(const std::string& field) {
