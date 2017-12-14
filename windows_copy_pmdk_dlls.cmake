@@ -49,7 +49,7 @@ if (WIN32)
 	# Windows path conversion
 	string(REGEX REPLACE "/" "\\\\" BINDIR ${CMAKE_CURRENT_BINARY_DIR})
 
-	# copy required DLLs to binary dir
+	#Empty target which will copy PMDK DLLs to build/ directory when being built
 	add_custom_target(CopyPmdkDlls
 		# Other projects are dependant on CopyPmdkDlls which means that these commands
 		# will be launched before $(Configuration) directory is created
