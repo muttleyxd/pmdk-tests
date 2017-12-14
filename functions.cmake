@@ -41,7 +41,7 @@ function(set_source_groups FILTER_PREFIX)
 endfunction(set_source_groups)
 
 function(powershell_download_file URL PATH)
-	execute_process(COMMAND powershell -Command "(New-Object Net.WebClient).DownloadFile('${URL}', '${PATH}')")
+    execute_process(COMMAND powershell ${CMAKE_SOURCE_DIR}/etc/scripts/powershell_download_file.ps1 ${URL} ${PATH} VERBATIM)
 endfunction()
 
 function(download_gtest)
@@ -56,7 +56,6 @@ function(download_gtest)
 	if (WIN32)
 		set(FORCE_SHARED_CRT_WINDOWS "-Dgtest_force_shared_crt=ON")
 		set(BUILD_FLAGS_WINDOWS "-DCMAKE_CXX_FLAGS=/MP")
-		execute_process(COMMAND powershell -Command "New-Item -Path ${CMAKE_SOURCE_DIR} -name ext\\gtest -ItemType directory -Force | Out-Null")
 		powershell_download_file("https://github.com/google/googletest/archive/release-${GTEST_VERSION}.zip"
 			"${CMAKE_SOURCE_DIR}\\ext\\gtest\\googletest-${GTEST_VERSION}.zip")
 	else ()
@@ -109,7 +108,6 @@ function(download_pugixml)
 	# On Linux we need to pass build type to CMake
 	if (WIN32)
 		set(BUILD_FLAGS_WINDOWS "-DCMAKE_CXX_FLAGS=/MP /EHsc")
-		execute_process(COMMAND powershell -Command "New-Item -Path ${CMAKE_SOURCE_DIR} -name ext\\pugixml -ItemType directory -Force | Out-Null")
 		powershell_download_file("https://github.com/zeux/pugixml/releases/download/v1.8.1/pugixml-${PUGIXML_VERSION}.tar.gz"
 			"${CMAKE_SOURCE_DIR}\\ext\\pugixml\\pugixml-${PUGIXML_VERSION}.tar.gz")
 	else ()
