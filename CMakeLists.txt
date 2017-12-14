@@ -40,24 +40,14 @@ endif()
 project(pmdk_tests)
 
 # check if 32-bit architecture
-if (CMAKE_SIZEOF_VOID_P EQUAL 4)
-	message(FATAL_ERROR "----You can't make x86 build. Please set build to x64----")
+if (NOT CMAKE_SIZEOF_VOID_P EQUAL 8)
+	message(FATAL_ERROR "----Building as 64-bit is required. Please set build to 64-bit----")
 	return()
 endif ()
 
+find_package(PkgConfig QUIET)
+include(FindThreads)
 include(functions.cmake) # Function definitions
-
-if (NOT WIN32)
-	# If CMAKE_BUILD_TYPE was not set, then let's set RELEASE as default
-	if (NOT CMAKE_BUILD_TYPE)
-		message("CMAKE_BUILD_TYPE not set, setting to RELEASE")
-		set(CMAKE_BUILD_TYPE "RELEASE" FORCE)
-	else ()
-		# ensure CMAKE_BUILD_TYPE is uppercase - later functions expect uppercase build type
-		string(TOUPPER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE_UPPERCASE)
-		set(CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE_UPPERCASE})
-	endif ()
-endif ()
 
 # Find and set GTest, PugiXML and PMDK libraries paths
 download_gtest()
@@ -80,11 +70,17 @@ if (WIN32)
 			debug "$ENV{PMDKDebug}\\libpmempool.lib"
 			optimized "$ENV{PMDKRelease}\\libpmempool.lib")
 else ()
-	find_library(Libpmemblk "pmemblk")
-	find_library(Libpmemlog "pmemlog")
-	find_library(Libpmemobj "pmemobj")
-	find_library(Libpmempool "pmempool")
-	find_library(Libpthread "pthread")
+	if (PKG_CONFIG_FOUND)
+		pkg_check_modules(Libpmemblk REQUIRED libpmemblk)
+		pkg_check_modules(Libpmemlog REQUIRED libpmemlog)
+		pkg_check_modules(Libpmemobj REQUIRED libpmemobj)
+		pkg_check_modules(Libpmempool REQUIRED libpmempool)
+	else ()
+		find_library(Libpmemblk "pmemblk")
+		find_library(Libpmemlog "pmemlog")
+		find_library(Libpmemobj "pmemobj")
+		find_library(Libpmempool "pmempool")
+	endif ()
 endif ()
 
 include_directories(src/utils)
@@ -93,7 +89,7 @@ set(CMAKE_CXX_STANDARD 11)
 
 # Set platform specific flags/includes/libs
 if (MSVC)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /wd\"4005\"")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
 	include_directories($ENV{PMDKInclude})
 else ()
 	# Disable RPATH so LD_LIBRARY_PATH can be used

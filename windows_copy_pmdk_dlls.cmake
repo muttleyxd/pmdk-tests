@@ -32,6 +32,20 @@
 if (WIN32)
 	set(VARS_TO_SET "")
 
+	if (NOT EXISTS "$ENV{PMDKInclude}")
+		set(VARS_TO_SET "${VARS_TO_SET} PMDKInclude")
+	endif ()
+	if (NOT EXISTS "$ENV{PMDKDebug}")
+		set(VARS_TO_SET "${VARS_TO_SET} PMDKDebug")
+	endif ()
+	if (NOT EXISTS "$ENV{PMDKRelease}")
+		set(VARS_TO_SET "${VARS_TO_SET} PMDKRelease")
+	endif ()
+
+	if (NOT VARS_TO_SET STREQUAL "")
+		message(FATAL_ERROR "Following environmental variables need to be set to valid directories: ${VARS_TO_SET}")
+	endif ()
+
 	# Windows path conversion
 	string(REGEX REPLACE "/" "\\\\" BINDIR ${CMAKE_CURRENT_BINARY_DIR})
 

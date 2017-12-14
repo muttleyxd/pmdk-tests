@@ -55,9 +55,8 @@ function(download_gtest)
 	# On Linux we need to pass build type to CMake
 	if (WIN32)
 		set(FORCE_SHARED_CRT_WINDOWS "-Dgtest_force_shared_crt=ON")
-	set(BUILD_FLAGS_WINDOWS "-DCMAKE_CXX_FLAGS=/MP")
-	set(BUILD_LANG_CXX "-DGTEST_LANG_CXX11")
-	execute_process(COMMAND powershell -Command "New-Item -Path ${CMAKE_SOURCE_DIR} -name ext\\gtest -ItemType directory -Force | Out-Null")
+		set(BUILD_FLAGS_WINDOWS "-DCMAKE_CXX_FLAGS=/MP")
+		execute_process(COMMAND powershell -Command "New-Item -Path ${CMAKE_SOURCE_DIR} -name ext\\gtest -ItemType directory -Force | Out-Null")
 		powershell_download_file("https://github.com/google/googletest/archive/release-${GTEST_VERSION}.zip"
 			"${CMAKE_SOURCE_DIR}\\ext\\gtest\\googletest-${GTEST_VERSION}.zip")
 	else ()
@@ -110,24 +109,24 @@ function(download_pugixml)
 	# On Linux we need to pass build type to CMake
 	if (WIN32)
 		set(BUILD_FLAGS_WINDOWS "-DCMAKE_CXX_FLAGS=/MP /EHsc")
-	execute_process(COMMAND powershell -Command "New-Item -Path ${CMAKE_SOURCE_DIR} -name ext\\pugixml -ItemType directory -Force | Out-Null")
-		powershell_download_file("https://github.com/zeux/pugixml/releases/download/v1.8.1/pugixml-${PUGIXML_VERSION}.zip"
-			"${CMAKE_SOURCE_DIR}\\ext\\pugixml\\pugixml-${PUGIXML_VERSION}.zip")
+		execute_process(COMMAND powershell -Command "New-Item -Path ${CMAKE_SOURCE_DIR} -name ext\\pugixml -ItemType directory -Force | Out-Null")
+		powershell_download_file("https://github.com/zeux/pugixml/releases/download/v1.8.1/pugixml-${PUGIXML_VERSION}.tar.gz"
+			"${CMAKE_SOURCE_DIR}\\ext\\pugixml\\pugixml-${PUGIXML_VERSION}.tar.gz")
 	else ()
 		set(BUILD_TYPE_LINUX "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}")
 	endif ()
 
-	if (EXISTS ${CMAKE_SOURCE_DIR}/ext/pugixml/pugixml-${PUGIXML_VERSION}.zip)
-		set(PUGIXML_URL ${CMAKE_SOURCE_DIR}/ext/pugixml/pugixml-${PUGIXML_VERSION}.zip)
+	if (EXISTS ${CMAKE_SOURCE_DIR}/ext/pugixml/pugixml-${PUGIXML_VERSION}.tar.gz)
+		set(PUGIXML_URL ${CMAKE_SOURCE_DIR}/ext/pugixml/pugixml-${PUGIXML_VERSION}.tar.gz)
 	else ()
-		set(PUGIXML_URL https://github.com/zeux/pugixml/releases/download/v1.8.1/pugixml-${PUGIXML_VERSION}.zip)
+		set(PUGIXML_URL https://github.com/zeux/pugixml/releases/download/v1.8.1/pugixml-${PUGIXML_VERSION}.tar.gz)
 	endif ()
 
 	ExternalProject_Add(
 		pugixml
 		URL ${PUGIXML_URL}
-		URL_HASH SHA256=31beca634399561b087df09d8b614c3746e9e232b8977747f57622427326312b
-		DOWNLOAD_NAME pugixml-${PUGIXML_VERSION}.zip
+		URL_HASH SHA256=00d974a1308e85ca0677a981adc1b2855cb060923181053fb0abf4e2f37b8f39
+		DOWNLOAD_NAME pugixml-${PUGIXML_VERSION}.tar.gz
 		DOWNLOAD_DIR ${CMAKE_SOURCE_DIR}/ext/pugixml
 		PREFIX ${CMAKE_CURRENT_BINARY_DIR}/ext/pugixml
 		INSTALL_COMMAND ""
