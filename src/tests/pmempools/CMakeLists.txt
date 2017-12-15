@@ -47,7 +47,4 @@ add_dependencies(PMEMPOOLS Utils libgtest)
 
 if (WIN32)
 	add_dependencies(PMEMPOOLS CopyPmdkDlls)
-	if (MSVC)
-		target_compile_options(PMEMPOOLS PRIVATE "/D_CRT_SECURE_NO_WARNINGS" "/DNVML_UTF8_API" "/DGTEST_LANG_CXX11")
-	endif ()
 endif ()

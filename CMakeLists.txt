@@ -89,7 +89,7 @@ set(CMAKE_CXX_STANDARD 11)
 
 # Set platform specific flags/includes/libs
 if (MSVC)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /D_CRT_SECURE_NO_WARNINGS /DNVML_UTF8_API /DGTEST_LANG_CXX11")
 	include_directories($ENV{PMDKInclude})
 else ()
 	# Disable RPATH so LD_LIBRARY_PATH can be used
