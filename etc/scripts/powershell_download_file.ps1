@@ -31,12 +31,49 @@
 
 param (
   [string]$URL,
-  [string]$PATH
+  [string]$PATH,
+  [string]$SHA256HASH
 )
 
-# Create directory which will contain created file
+# Create directory which will contain created file if it does not exist
 $DIR_TO_CREATE = (Split-Path $PATH)
-New-Item $DIR_TO_CREATE -ItemType directory -Force | Out-Null
 
-# Download file
-(New-Object Net.WebClient).DownloadFile("${URL}", "${PATH}")
+if (-Not (Test-Path "$DIR_TO_CREATE"))
+{
+	New-Item $DIR_TO_CREATE -ItemType directory -Force | Out-Null
+}
+
+# Checks if file is correct (exists and has correct SHA256 checksum)
+Function Is-File-Correct
+{
+	if (-Not (Test-Path "$PATH"))
+	{
+		return $false
+	}
+
+	$HASH = (Get-FileHash "$PATH" -Algorithm SHA256 | Select-Object -ExpandProperty Hash)
+	if ("$HASH" -eq "$SHA256HASH")
+	{
+		return $true
+	}
+	return $false
+}
+
+# If file is not correct then download it again
+for ($i = 1; $i -le 10; $i++)
+{
+	if (Is-File-Correct)
+	{
+		exit 0
+	}
+	else
+	{
+		Write-Host "Downloading, try $i of 10"
+		(New-Object Net.WebClient).DownloadFile("${URL}", "${PATH}")
+	}
+}
+if (Is-File-Correct)
+{
+	exit 0
+}
+exit 1

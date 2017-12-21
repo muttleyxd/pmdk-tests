@@ -40,8 +40,13 @@ function(set_source_groups FILTER_PREFIX)
 	endforeach()
 endfunction(set_source_groups)
 
-function(powershell_download_file URL PATH)
-	execute_process(COMMAND powershell ".\\powershell_download_file.ps1 -URL '${URL}' -PATH '${PATH}'" WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/etc/scripts")
+function(powershell_download_file URL PATH SHA256HASH)
+	message("Downloading file ${URL}")
+	execute_process(COMMAND powershell ".\\powershell_download_file.ps1 -URL '${URL}' -PATH '${PATH}' -SHA256HASH '${SHA256HASH}'" WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/etc/scripts"
+		RESULT_VARIABLE DOWNLOAD_RESULT)
+	if ("${DOWNLOAD_RESULT}" GREATER "0")
+		message(FATAL_ERROR "Downloading file ${URL} failed")
+	endif ()
 endfunction()
 
 function(download_gtest)
@@ -57,7 +62,8 @@ function(download_gtest)
 		set(FORCE_SHARED_CRT_WINDOWS "-Dgtest_force_shared_crt=ON")
 		set(BUILD_FLAGS_WINDOWS "-DCMAKE_CXX_FLAGS=/MP")
 		powershell_download_file("https://github.com/google/googletest/archive/release-${GTEST_VERSION}.zip"
-			"${CMAKE_SOURCE_DIR}\\ext\\gtest\\googletest-${GTEST_VERSION}.zip")
+			"${CMAKE_SOURCE_DIR}\\ext\\gtest\\googletest-${GTEST_VERSION}.zip"
+			"f3ed3b58511efd272eb074a3a6d6fb79d7c2e6a0e374323d1e6bcbcc1ef141bf")
 	else ()
 		set(BUILD_TYPE_LINUX "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}")
 	endif ()
@@ -109,7 +115,8 @@ function(download_pugixml)
 	if (WIN32)
 		set(BUILD_FLAGS_WINDOWS "-DCMAKE_CXX_FLAGS=/MP /EHsc")
 		powershell_download_file("https://github.com/zeux/pugixml/releases/download/v1.8.1/pugixml-${PUGIXML_VERSION}.tar.gz"
-			"${CMAKE_SOURCE_DIR}\\ext\\pugixml\\pugixml-${PUGIXML_VERSION}.tar.gz")
+			"${CMAKE_SOURCE_DIR}\\ext\\pugixml\\pugixml-${PUGIXML_VERSION}.tar.gz"
+			"00d974a1308e85ca0677a981adc1b2855cb060923181053fb0abf4e2f37b8f39")
 	else ()
 		set(BUILD_TYPE_LINUX "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}")
 	endif ()
