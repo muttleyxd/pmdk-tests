@@ -115,6 +115,19 @@ else ()
 	# Disable RPATH so LD_LIBRARY_PATH can be used
 	set(CMAKE_SKIP_RPATH ON)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Drestrict=__restrict__ -Werror -Wall -Wextra -pedantic-errors -Wpedantic -std=c++11")
+
+	# Get current distribution name - read first 6 bytes of /etc/issue
+	file(READ /etc/issue ISSUE_NAME LIMIT 6)
+	# Remove whitespaces
+	string(STRIP "${ISSUE_NAME}" ISSUE_NAME_STRIPPED)
+	# Convert to lower case
+	string(TOLOWER "${ISSUE_NAME_STRIPPED}" ISSUE_NAME_LOWER})
+
+	# Workaround for a bug in Ubuntu 17.10 and its GCC 5.4
+	# issue link : https://bugs.launchpad.net/ubuntu/+source/gcc-5/+bug/1739778
+	if ("${ISSUE_NAME_LOWER}" STREQUAL "ubuntu" AND CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 5.4 AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5.5)
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_GLIBCXX_USE_C99")
+	endif ()
 endif ()
 
 include(src/CMakeLists.txt)
