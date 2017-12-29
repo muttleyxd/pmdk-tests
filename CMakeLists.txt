@@ -114,11 +114,10 @@ if (MSVC)
 else ()
 	#Sets WORKAROUND_FLAGS variable which contains flags required to build with current configuration
 	check_workaround_flags_required()
-	message("WORKAROUND FLAGS-public: ${WORKAROUND_FLAGS}")
 
 	# Disable RPATH so LD_LIBRARY_PATH can be used
 	set(CMAKE_SKIP_RPATH ON)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Drestrict=__restrict__ -Werror -Wall -Wextra -pedantic-errors -Wpedantic -std=c++11")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Drestrict=__restrict__ -Werror -Wall -Wextra -pedantic-errors -Wpedantic -std=c++11 ${WORKAROUND_FLAGS}")
 
 	# Get current distribution name - read first 6 bytes of /etc/issue
 	file(READ /etc/issue ISSUE_NAME LIMIT 6)
