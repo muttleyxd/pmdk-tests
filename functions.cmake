@@ -148,3 +148,27 @@ function(download_pugixml)
 
 	include_directories(SYSTEM "${CMAKE_CURRENT_BINARY_DIR}/ext/pugixml/src/pugixml/src")
 endfunction()
+
+include(CheckCXXSourceCompiles)
+function(check_workaround_flags_required)
+	check_cxx_source_compiles("
+		#include <string>
+		#include <iostream>
+
+		int main()
+		{
+			std::cout << std::to_string(4) << std::endl;
+			return 0;
+		}
+	"
+	D_GLIBCXX_USE_C99_NOT_REQUIRED)
+	message("WORKAROUND GLIBCXX: ${D_GLIBCXX_USE_C99_NOT_REQUIRED}")
+
+	set(WORKAROUND_FLAGS "")
+	if (NOT D_GLIBCXX_USE_C99_NOT_REQUIRED)
+		set(WORKAROUND_FLAGS "${WORKAROUND_FLAGS} -D_GLIBCXX_USE_C99")
+	endif ()
+
+	message("WORKAROUND FLAGS-private: ${WORKAROUND_FLAGS}")
+	set(WORKAROUND_FLAGS "${WORKAROUND_FLAGS}" PARENT_SCOPE)
+endfunction()
