@@ -58,6 +58,11 @@ enum class Option {
   BSize,
   Layout,
 
+  Output,
+  Binary,
+  Range,
+  Chunk,
+
   Count
 };
 
@@ -76,10 +81,11 @@ struct Arg {
   std::string value;
 
   Arg(Option option, OptionType arg_type, std::string value)
-      : option(option), arg_type(arg_type), value(value){}
+      : option(option), arg_type(arg_type), value(value) {
+  }
 
-  Arg(Option option, OptionType arg_type)
-      : option(option), arg_type(arg_type){}
+  Arg(Option option, OptionType arg_type) : option(option), arg_type(arg_type) {
+  }
 };
 
 struct PoolArgs {
@@ -90,16 +96,20 @@ struct PoolArgs {
   PoolArgs() = default;
 
   PoolArgs(PoolType pool_type_, std::initializer_list<Arg> args_)
-      : pool_type(pool_type_), args(args_){}
+      : pool_type(pool_type_), args(args_) {
+  }
 
-  PoolArgs(PoolType pool_type) : pool_type(pool_type){}
+  PoolArgs(PoolType pool_type) : pool_type(pool_type) {
+  }
 
   PoolArgs(PoolType pool_type_, std::initializer_list<Arg> args_,
            std::string err_msg_)
-      : pool_type(pool_type_), args(args_), err_msg(err_msg_){}
+      : pool_type(pool_type_), args(args_), err_msg(err_msg_) {
+  }
 
   PoolArgs(PoolType pool_type, std::string err_msg_)
-      : pool_type(pool_type), err_msg(err_msg_){}
+      : pool_type(pool_type), err_msg(err_msg_) {
+  }
 };
 
 struct PoolInherit {
@@ -110,6 +120,23 @@ struct PoolInherit {
 struct PoolsetArgs {
   PoolArgs args;
   Poolset poolset;
+};
+
+struct DumpArgs {
+  std::vector<Arg> args;
+  std::string err_msg;
+
+  DumpArgs() = default;
+
+  DumpArgs(std::initializer_list<Arg> args_) : args(args_) {
+  }
+
+  DumpArgs(std::string err_msg_) : err_msg(err_msg_) {
+  }
+
+  DumpArgs(std::initializer_list<Arg> args_, std::string err_msg_)
+      : args(args_), err_msg(err_msg_) {
+  }
 };
 
 namespace struct_utils {
@@ -123,10 +150,12 @@ const std::array<std::string, ConvertEnum<int>(PoolType::Count)> POOL_TYPES{
 
 const std::array<std::string, ConvertEnum<int>(Option::Count)> LONG_OPTIONS{
     {"--size ", "--max-size ", "--mode ", "--inherit ", "--force ",
-     "--verbose ", "--help ", "--write-layout", "", "--layout "}};
+     "--verbose ", "--help ", "--write-layout", "", "--layout ", "--output ",
+     "--binary", "--range ", "--chunk "}};
 
 const std::array<std::string, ConvertEnum<int>(Option::Count)> SHORT_OPTIONS{
-    {"-s", "-M", "-m", "-i", "-f", "-v", "-h", "-w", "", "-l"}};
+    {"-s", "-M", "-m", "-i", "-f", "-v", "-h", "-w", "", "-l", "-o", "-b", "-r",
+     "-c"}};
 
 const std::array<size_t, ConvertEnum<int>(PoolType::Count)> POOL_MIN_SIZES{
     {static_cast<size_t>(PMEMOBJ_MIN_POOL),
